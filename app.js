@@ -88,7 +88,7 @@
   function renderCycle() {
     const c = state.current;
     $('track-label').textContent = `ТРЕК ${String(state.archive.length + 1).padStart(2, '0')}`;
-    $('track-title').value = c.title || ''; $('release-date').value = c.date || ''; $('release-notes').value = c.notes || '';
+    $('track-title').value = c.title || ''; $('release-date').value = c.date || '';
     $('current-track-heading').textContent = c.title || 'Держи фокус.';
     $('dashboard-track-title').textContent = c.title || '';
     $('dashboard-release-date').textContent = c.date ? `Дата релиза · ${formatDate(c.date)}` : '';
@@ -232,7 +232,7 @@
     const date = $('release-date').value;
     if (!title) { toast('Добавь название трека'); $('track-title').focus(); return; }
     if (!date) { toast('Укажи дату релиза'); $('release-date').focus(); return; }
-    Object.assign(state.current, { title, date, notes: $('release-notes').value.trim() });
+    Object.assign(state.current, { title, date });
     save(); $('current-track-heading').textContent = title; $('dashboard-track-title').textContent = title; $('dashboard-release-date').textContent = `Дата релиза · ${formatDate(date)}`; renderNotes();
     transitionHomeSlide('dashboard'); toast('Изменения сохранены · прогресс на месте');
   });
@@ -260,7 +260,7 @@
     const cycle = notesTarget(); readNotesEditor(cycle);
     const invalid = cycle.refLinks.find(ref => ref.url && !validHttpUrl(ref.url));
     if (invalid) { toast('Ссылка должна начинаться с https:// или http://'); return; }
-    save(); renderNoteLinks(cycle); if (cycle === state.current) $('release-notes').value = cycle.notes; toast('Заметки и референсы сохранены');
+    save(); renderNoteLinks(cycle); toast('Заметки и референсы сохранены');
   });
   $('archive-list').addEventListener('click', e => { const button = e.target.closest('[data-note-index]'); if (!button) return; state.notesTarget = `archive:${button.dataset.noteIndex}`; save(); showView('notes'); });
 
