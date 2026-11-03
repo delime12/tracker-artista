@@ -91,6 +91,13 @@
   $('save-profile').addEventListener('click', () => {
     state.profile = { ...state.profile, alias: $('profile-alias').value.trim() }; save(); renderProfile(); toast('Профиль сохранён');
   });
+  $('reset-app-data').addEventListener('click', () => {
+    const confirmed = window.confirm('Удалить все данные трекера на этом устройстве? Исчезнут текущий и архивные треки, заметки, отметки плана, аналитика, аватар и настройки. Это действие нельзя отменить.');
+    if (!confirmed) return;
+    localStorage.removeItem(KEY);
+    if (telegramUserId) localStorage.removeItem(BASE_KEY);
+    window.location.reload();
+  });
   document.querySelectorAll('[data-theme-choice]').forEach(button => button.addEventListener('click', () => {
     state.theme = button.dataset.themeChoice; document.body.dataset.theme = state.theme;
     document.querySelectorAll('[data-theme-choice]').forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));

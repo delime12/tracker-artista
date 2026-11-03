@@ -34,6 +34,8 @@ main{padding-bottom:112px}.guide-area{max-width:900px;margin:36px auto 0;padding
 @media(max-width:650px){.brand-name{max-width:min(27vw,118px)}#brand-alias{letter-spacing:.1em}}
 @media(max-width:380px){.brand-name{max-width:22vw}.top-status{gap:5px;font-size:7px}.top-status span{padding-left:5px}}
 @media(max-width:650px){.release-card .fields{display:grid;width:100%;min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr)}.release-card .fields>.field{width:100%;min-width:0;max-width:100%}.release-card #release-date{display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box}}
+.profile-reset{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:30px;padding:16px;border:1px solid #f0796d30;border-radius:13px;background:#f0796d08}.profile-reset b{font-size:11px;color:#e9a49b}.profile-reset p{margin:5px 0 0;color:#979a90;font-size:9px;line-height:1.5}.profile-reset-button{flex:0 0 auto;border:1px solid #f0796d55;background:#f0796d12;color:#efaaa1}.profile-reset-button:hover{background:#f0796d22}
+@media(max-width:480px){.profile-reset{align-items:flex-start;flex-direction:column}.profile-reset-button{width:100%}}
 
 /* Expressive motion system: choreographed entrances, spring feedback and graphic reveals. */
 @keyframes motionRise{0%{opacity:0;transform:translate3d(0,34px,0) scale(.965);filter:blur(7px)}65%{opacity:1;transform:translate3d(0,-5px,0) scale(1.008);filter:blur(0)}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}
