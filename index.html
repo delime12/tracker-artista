@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090a08">
+  <meta name="description" content="Бесплатный трекер релиза и продвижения артиста">
+  <title>ТРЕКЕР АРТИСТА</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?64"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <div class="brand"><button class="brand-mark" id="avatar-upload-button" type="button" aria-label="Загрузить аватарку" title="Загрузить аватарку"><span id="avatar-fallback">Т</span><img id="avatar-image" alt="" hidden></button><input id="avatar-file" type="file" accept="image/png,image/jpeg,image/webp" hidden><span>ТРЕКЕР<br><b>АРТИСТА</b></span></div>
+    <div class="top-status"><i></i> ЛИЧНЫЙ РИТМ <span id="track-label">ТРЕК 01</span></div>
+    <button class="icon-button" id="menu-button" aria-label="Открыть личный кабинет" title="Личный кабинет">☰</button>
+  </header>
+  <main>
+    <section class="view active" id="home-view">
+      <div class="flow-slide" id="welcome-slide">
+      <div class="hero-head"><div><p class="eyebrow">ТВОЯ МУЗЫКА · ТВОИ ПРАВИЛА</p><h1>Релиз начинается<br><em>с движения.</em></h1></div><div class="hero-orb"><span>30</span><small>ДНЕЙ</small></div></div>
+      <div class="glass release-card">
+        <div class="card-heading"><div><p class="eyebrow">ТЕКУЩИЙ РЕЛИЗ</p><h2 id="current-track-heading">Держи фокус.</h2></div><span class="live-pill"><i></i> В РАБОТЕ</span></div>
+        <div class="fields">
+          <label class="field wide">Название трека<input id="track-title" placeholder="Например, «На орбите»" maxlength="80"></label>
+          <label class="field">Дата релиза<input id="release-date" type="date"></label>
+          <label class="field notes-field">Заметки<textarea id="release-notes" placeholder="Идеи, ссылки, напоминания…" maxlength="1200" rows="3"></textarea></label>
+        </div>
+        <div class="release-actions"><button class="button button-bright" id="save-release">Сохранить изменения</button></div>
+      </div>
+      <div class="guide-area"><aside class="app-guide" aria-label="Главная задача приложения"><span class="guide-kicker"><i></i> ЗАДАЧА ТРЕКЕРА</span><p>Главная задача продукта — помочь независимому артисту выпускать <strong>один трек в месяц</strong>, регулярно создавать контент, продвигать музыку и отслеживать рост своей аудитории.</p></aside><footer class="guide-privacy">Все данные хранятся на этом устройстве · Бесплатно навсегда</footer></div>
+      </div>
+      <div class="flow-slide" id="dashboard-slide" hidden>
+      <button class="glass track-summary" id="edit-release" type="button" aria-label="Изменить данные релиза"><span class="track-summary-copy"><span class="eyebrow">ТЕКУЩИЙ РЕЛИЗ</span><strong id="dashboard-track-title"></strong><small id="dashboard-release-date"></small></span><span class="track-edit-label">✎ Изменить</span></button>
+      <div class="section-head"><div><p class="eyebrow">МЕСЯЦ В ДВИЖЕНИИ</p><h2>План на 30 дней</h2></div><span class="count-badge" id="snippet-count">0 / 30</span></div>
+      <div class="glass progress-card"><div class="progress-copy"><span>Сниппеты опубликованы</span><b id="snippet-percent">0%</b></div><div class="progress-track"><div id="snippet-progress"></div></div><div class="days-grid" id="days-grid"></div><div class="card-foot"><span>Отмечай несколько дней сразу — можно заполнить план заранее</span><button class="mini-action" id="undo-snippet" disabled>Отменить последнюю отметку</button></div></div>
+      <div class="quest-guidance"><span class="eyebrow">КВЕСТЫ НА МЕСЯЦ</span><p>Выполняй задания в течение месяца. Повторяй подходящие действия и набирай больше целевых отметок.</p></div>
+      <div class="quest-grid">
+        <article class="glass quest-card"><div class="quest-top"><div><p class="eyebrow">КВЕСТ 01</p><h3>Рост и контент</h3></div></div><p class="quest-desc">Покажи музыку и человека за ней.</p><div class="quest-progress"><b id="growth-count">0 / 5</b><div class="progress-track"><div id="growth-progress"></div></div></div><label class="select-label" for="growth-type">Что сделал сегодня?</label><select id="growth-type"></select><div class="quest-buttons"><button class="button button-subtle" id="add-growth">＋ Добавить выполнение</button><button class="mini-action" id="undo-growth" disabled>Отменить</button></div><div class="activity-list" id="growth-list"></div></article>
+        <article class="glass quest-card"><div class="quest-top"><div><p class="eyebrow">КВЕСТ 02</p><h3>Продвижение</h3></div></div><p class="quest-desc">Дай треку шанс встретить слушателя.</p><div class="quest-progress"><b id="promo-count">0 / 3</b><div class="progress-track"><div id="promo-progress"></div></div></div><label class="select-label" for="promo-type">Что сделал сегодня?</label><select id="promo-type"></select><div class="quest-buttons"><button class="button button-subtle" id="add-promo">＋ Добавить выполнение</button><button class="mini-action" id="undo-promo" disabled>Отменить</button></div><div class="activity-list" id="promo-list"></div></article>
+      </div>
+      <div class="finish-plan-wrap"><button class="button button-bright finish-plan-button" id="finish-plan">Завершить план</button><p>Сначала проверим аналитику за месяц запланированного релиза.</p></div>
+      <div class="tip-line quest-motivation"><span>✦</span><p>Каждый квест помогает продвигать трек. Регулярные действия приближают его к новым слушателям и успеху.</p></div>
+      </div>
+    </section>
+    <section class="view" id="analytics-view">
+      <div class="page-heading"><p class="eyebrow">ЦИФРЫ БЕЗ СЛОЖНОСТИ</p><h1>Твоя аналитика.</h1><p>Сохраняй показатели вручную раз в месяц и смотри, как растёт аудитория.</p></div>
+      <div id="analytics-pending" class="glass analytics-pending" hidden><span class="pending-icon">◷</span><div><b>Перед завершением плана заполни аналитику</b><p id="analytics-pending-copy">Сохрани показатели за этот месяц, чтобы увидеть статистику.</p></div></div>
+      <div class="glass analytics-entry"><div class="card-heading"><div><p class="eyebrow">ОТЧЁТ ЗА МЕСЯЦ</p><h2 id="report-month-title">Этот месяц</h2></div><input id="report-month" type="month" aria-label="Месяц отчёта"></div><p class="analytics-help">Эти показатели можно найти в кабинете артиста или разделе статистики каждой площадки.</p>
+        <div id="legacy-report-note" class="legacy-report-note" hidden>Этот отчёт сохранён до разбивки по музыкальным сервисам. Старые общие показатели останутся в истории; заполни данные по каждому сервису отдельно.</div>
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-name"><span class="platform-dot insta"></span> Instagram</div><label>Просмотры<input id="ig-views" type="number" min="0" placeholder="0"></label><label>Подписчики<input id="ig-followers" type="number" min="0" placeholder="0"></label></div>
+          <div class="metric"><div class="metric-name"><span class="platform-dot tiktok"></span> TikTok</div><label>Просмотры<input id="tt-views" type="number" min="0" placeholder="0"></label><label>Подписчики<input id="tt-followers" type="number" min="0" placeholder="0"></label></div>
+          <div class="metric"><div class="metric-name"><span class="platform-dot music"></span> Яндекс Музыка</div><label>Прослушивания<input id="yandex-plays" type="number" min="0" placeholder="0"></label><label>Уникальные слушатели<input id="yandex-listeners" type="number" min="0" placeholder="0"></label></div>
+          <div class="metric"><div class="metric-name"><span class="platform-dot music"></span> VK Музыка</div><label>Прослушивания<input id="vk-plays" type="number" min="0" placeholder="0"></label><label>Уникальные слушатели<input id="vk-listeners" type="number" min="0" placeholder="0"></label></div>
+          <div class="metric"><div class="metric-name"><span class="platform-dot music"></span> Spotify</div><label>Прослушивания<input id="spotify-plays" type="number" min="0" placeholder="0"></label><label>Уникальные слушатели<input id="spotify-listeners" type="number" min="0" placeholder="0"></label></div>
+          <div class="metric"><div class="metric-name"><span class="platform-dot music"></span> Apple Music</div><label>Прослушивания<input id="apple-plays" type="number" min="0" placeholder="0"></label><label>Уникальные слушатели<input id="apple-listeners" type="number" min="0" placeholder="0"></label></div>
+        </div><button class="button button-bright" id="save-report">Сохранить отчёт</button>
+      </div>
+      <div class="section-head"><div><p class="eyebrow">ТВОЯ ИСТОРИЯ</p><h2>Месячные отчёты</h2></div><span class="count-badge" id="report-count">0 отчётов</span></div>
+      <div class="report-list" id="report-list"></div>
+      <div class="glass quarter-card"><div><p class="eyebrow">ПОСЛЕ ТРЁХ ОТЧЁТОВ</p><h2>Квартальное сравнение</h2><p>Сопоставь три последних месяца и увидь динамику.</p></div><div id="quarter-content" class="quarter-content"></div></div>
+      <section class="glass trend-section" aria-labelledby="trend-title"><div class="trend-heading"><div><p class="eyebrow">МЕСЯЦ К МЕСЯЦУ</p><h2 id="trend-title">График и прирост по площадкам</h2><p>Сравнение показателей за три последних сохранённых отчёта.</p></div><span class="trend-period" id="trend-period">3 месяца</span></div><div id="trend-content"></div></section>
+    </section>
+    <section class="view" id="profile-view">
+      <div class="page-heading"><p class="eyebrow">ПРОФИЛЬ АРТИСТА</p><h1>Твой кабинет.</h1><p>Настрой свой профиль и выбери атмосферу трекера.</p></div>
+      <div class="glass profile-panel">
+        <div class="profile-identity"><button id="profile-avatar-button" class="profile-avatar-button" type="button" aria-label="Загрузить или изменить аватарку"><span id="profile-avatar-fallback">Т</span><img id="profile-avatar-image" alt="" hidden></button><div><p class="eyebrow">ТВОЁ ИМЯ В МУЗЫКЕ</p><strong id="profile-name-preview">Новый артист</strong><small>Псевдоним виден только в этом приложении</small></div></div>
+        <label class="field profile-alias">Псевдоним<input id="profile-alias" maxlength="60" placeholder="Например, DELIME"></label>
+        <div class="profile-subhead theme-subhead"><p class="eyebrow">ЦВЕТ ИНТЕРФЕЙСА</p><p>Выбери настроение своего трекера</p></div>
+        <div class="theme-choices">
+          <button class="theme-choice" type="button" data-theme-choice="lemon" aria-pressed="true"><span class="theme-swatch lemon-swatch"></span><span><b>Лимонный неон</b><small>Сочный акцент · тёмная сцена</small></span><i>✓</i></button>
+          <button class="theme-choice" type="button" data-theme-choice="electric" aria-pressed="false"><span class="theme-swatch electric-swatch"></span><span><b>Electric Blue</b><small>Тёмно-синий · электрический синий · оранжевый</small></span><i>✓</i></button>
+          <button class="theme-choice" type="button" data-theme-choice="sky" aria-pressed="false"><span class="theme-swatch sky-swatch"></span><span><b>Небесно-розовый</b><small>Небесно-голубой · белый · ярко-розовый</small></span><i>✓</i></button>
+        </div>
+        <div class="notes-actions"><button class="button button-bright" id="save-profile" type="button">Сохранить профиль</button><span>Профиль хранится на этом устройстве</span></div>
+      </div>
+    </section>
+    <section class="view" id="notes-view"><div class="page-heading"><p class="eyebrow">ИДЕИ · РЕФЕРЕНСЫ · ЗАМЕТКИ</p><h1>Творческая память.</h1><p>Собирай мысли и ссылки по текущему или архивному треку. Всё хранится на этом устройстве.</p></div><div class="glass notes-panel"><label class="field notes-track-label">Заметки для трека<select id="notes-track-select" aria-label="Выбрать трек для заметок"></select></label><div class="notes-track-caption" id="notes-track-caption"></div><label class="field notes-content-label">Твои заметки<textarea id="notes-content" placeholder="Идеи, тексты, настроение, напоминания…" maxlength="12000" rows="7"></textarea></label><div class="notes-links-heading"><div><p class="eyebrow">РЕФЕРЕНСЫ</p><p>Ссылки на звук, клипы, обложки и вдохновение.</p></div><button class="button button-subtle" id="add-note-link" type="button">＋ Добавить ссылку</button></div><div class="notes-links" id="notes-links"></div><div class="notes-actions"><button class="button button-bright" id="save-track-notes" type="button">Сохранить заметки</button><span>Заметки сохраняются отдельно для каждого трека</span></div></div></section>
+    <section class="view" id="archive-view"><div class="page-heading"><p class="eyebrow">ПУТЬ, КОТОРЫЙ УЖЕ ПРОЙДЕН</p><h1>Архив релизов.</h1><p>Каждый завершённый трек остаётся здесь вместе с отметками и квестами.</p></div><div class="archive-list" id="archive-list"></div></section>
+  </main>
+  <nav class="bottom-nav" aria-label="Основная навигация"><button class="nav-item selected" data-view="home"><span>⌂</span>Главная</button><button class="nav-item" data-view="analytics"><span>◷</span>Аналитика</button><button class="nav-item" data-view="notes"><span>▧</span>Заметки</button><button class="nav-item" data-view="archive"><span>▤</span>Архив</button></nav>
+  <dialog id="confirm-dialog" class="confirm-dialog"><div class="dialog-mark">✳</div><p class="eyebrow">НОВАЯ ГЛАВА</p><h2>Начать новый релиз?</h2><p>Текущий трек будет сохранён в архив. Для нового трека начнётся новый 30-дневный план.</p><div class="dialog-actions"><button class="button button-subtle" id="cancel-new">Оставить как есть</button><button class="button button-bright" id="confirm-new">Архивировать и начать</button></div></dialog>
+  <dialog id="review-dialog" class="confirm-dialog review-dialog"><div class="dialog-mark" id="review-mark">✦</div><p class="eyebrow" id="review-eyebrow">ИТОГИ ТРЕКА</p><h2 id="review-title"></h2><p id="review-message"></p><p id="review-slogan" class="review-slogan"></p><div class="review-section-label">ПЛАН ЗА МЕСЯЦ</div><div id="review-summary" class="review-summary"></div><div class="review-section-label" id="review-month-label">СТАТИСТИКА ЗА МЕСЯЦ</div><div id="review-month-summary" class="month-summary"></div><div class="dialog-actions"><button class="button button-subtle" id="review-close">Закрыть итоги</button><button class="button button-bright" id="review-new">Создать новый релиз</button></div></dialog>
+  <dialog id="quarter-dialog" class="confirm-dialog quarter-dialog"><div class="dialog-mark">◷</div><p class="eyebrow">ИТОГИ КВАРТАЛА</p><h2>Три месяца в цифрах</h2><p id="quarter-dialog-period" class="quarter-dialog-period"></p><div class="review-section-label">ПРОСЛУШИВАНИЯ ПО МЕСЯЦАМ</div><div id="quarter-dialog-months" class="quarter-content"></div><div class="review-section-label">ДИНАМИКА ПЛОЩАДОК</div><div id="quarter-dialog-charts"></div><div class="dialog-actions"><button class="button button-subtle" id="quarter-close">Закрыть отчёт</button><button class="button button-bright" id="quarter-new">Создать новый релиз</button></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
