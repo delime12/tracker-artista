@@ -109,16 +109,20 @@
   }
   function totalMusicPlays(values = {}) {
     const keys = ['yandexPlays', 'vkPlays', 'spotifyPlays', 'applePlays'];
-    return keys.some(key => values[key] !== undefined)
-      ? keys.reduce((sum, key) => sum + (Number(values[key]) || 0), 0)
-      : Number(values.musicPlays) || 0;
+    const available = keys.filter(key => values[key] !== undefined);
+    if (available.length) return available.reduce((sum, key) => sum + (Number(values[key]) || 0), 0);
+    return values.musicPlays === undefined ? null : Number(values.musicPlays) || 0;
+  }
+  function sumAvailable(values, keys) {
+    const available = keys.filter(key => values[key] !== undefined);
+    return available.length ? num(available.reduce((sum, key) => sum + (Number(values[key]) || 0), 0)) : '—';
   }
   function renderReports() {
     const sorted = [...state.reports].sort((a, b) => b.month.localeCompare(a.month));
     $('report-count').textContent = `${sorted.length} отчёт${sorted.length === 1 ? '' : sorted.length < 5 ? 'а' : 'ов'}`;
-    $('report-list').innerHTML = sorted.length ? sorted.map(r => `<article class="report-row"><div><h3>${esc(formatMonth(r.month))}</h3><p>Instagram · TikTok · Яндекс Музыка · VK · Spotify · Apple Music</p></div><div class="report-stats"><div><b>${num((Number(r.values.igViews) || 0) + (Number(r.values.ttViews) || 0))}</b><small>просмотры</small></div><div><b>${num(totalMusicPlays(r.values))}</b><small>прослушивания</small></div></div></article>`).join('') : '<div class="empty-state">Сохрани первый месячный отчёт — он появится здесь.</div>';
+    $('report-list').innerHTML = sorted.length ? sorted.map(r => `<article class="report-row"><div><h3>${esc(formatMonth(r.month))}</h3><p>Instagram · TikTok · Яндекс Музыка · VK · Spotify · Apple Music</p></div><div class="report-stats"><div><b>${sumAvailable(r.values, ['igViews', 'ttViews'])}</b><small>просмотры</small></div><div><b>${totalMusicPlays(r.values) === null ? '—' : num(totalMusicPlays(r.values))}</b><small>прослушивания</small></div></div></article>`).join('') : '<div class="empty-state">Сохрани первый месячный отчёт — он появится здесь.</div>';
     const q = sorted.slice(0, 3).reverse();
-    $('quarter-content').innerHTML = q.length < 3 ? `<div class="empty-state" style="grid-column:1/-1">Нужно ещё ${3 - q.length} ${q.length === 2 ? 'отчёт' : q.length === 1 ? 'отчёта' : 'отчёта'}, чтобы сравнить квартал.</div>` : q.map(r => `<div class="quarter-month"><b>${esc(shortMonth(r.month))}</b><span>${num(totalMusicPlays(r.values))}</span><small>прослушиваний</small></div>`).join('');
+    $('quarter-content').innerHTML = q.length < 3 ? `<div class="empty-state" style="grid-column:1/-1">Нужно ещё ${3 - q.length} ${q.length === 2 ? 'отчёт' : q.length === 1 ? 'отчёта' : 'отчёта'}, чтобы сравнить квартал.</div>` : q.map(r => `<div class="quarter-month"><b>${esc(shortMonth(r.month))}</b><span>${totalMusicPlays(r.values) === null ? '—' : num(totalMusicPlays(r.values))}</span><small>прослушиваний</small></div>`).join('');
     renderPlatformTrends(q);
   }
   function latestQuarter() { return [...state.reports].sort((a, b) => a.month.localeCompare(b.month)).slice(-3); }
@@ -208,10 +212,10 @@
     $('review-mark').textContent = completed ? '✦' : '↗';
     $('review-summary').innerHTML = `<div><span>Сниппеты</span><b>${Math.min(c.days.length, 30)} / 30</b></div><div><span>Рост и контент</span><b>${c.growth.length} / 5</b></div><div><span>Продвижение</span><b>${c.promo.length} / 3</b></div>`;
     const values = report?.values || {};
-    $('review-month-label').textContent = `СТАТИСТИКА ЗА ${formatMonth(report?.month || monthNow()).toLocaleUpperCase('ru-RU')}`;
+    $('review-month-label').textContent = `СТАТИСТИКА ЗА ${formatMonth(report?.month || c.date?.slice(0, 7) || monthNow()).toLocaleUpperCase('ru-RU')}`;
     const rows = [
-      ['Instagram', `${num(values.igViews)} просмотров · ${num(values.igFollowers)} подписчиков`],
-      ['TikTok', `${num(values.ttViews)} просмотров · ${num(values.ttFollowers)} подписчиков`],
+      ['Instagram', `${metricStat(values.igViews, 'просмотров')} · ${metricStat(values.igFollowers, 'подписчиков')}`],
+      ['TikTok', `${metricStat(values.ttViews, 'просмотров')} · ${metricStat(values.ttFollowers, 'подписчиков')}`],
       ['Яндекс Музыка', musicStat(values, 'yandexPlays', 'yandexListeners')],
       ['VK Музыка', musicStat(values, 'vkPlays', 'vkListeners')],
       ['Spotify', musicStat(values, 'spotifyPlays', 'spotifyListeners')],
@@ -221,7 +225,8 @@
     $('review-month-summary').innerHTML = rows.map(([name, stats]) => `<div><span>${esc(name)}</span><b>${stats}</b></div>`).join('');
     $('review-dialog').showModal();
   }
-  function musicStat(values, playsKey, listenersKey) { return values[playsKey] === undefined && values[listenersKey] === undefined ? '—' : `${num(values[playsKey])} прослушиваний · ${num(values[listenersKey])} слушателей`; }
+  function metricStat(value, label) { return value === undefined ? `нет данных ${label}` : `${num(value)} ${label}`; }
+  function musicStat(values, playsKey, listenersKey) { return values[playsKey] === undefined && values[listenersKey] === undefined ? 'нет данных' : `${metricStat(values[playsKey], 'прослушиваний')} · ${metricStat(values[listenersKey], 'слушателей')}`; }
   $('save-release').addEventListener('click', () => {
     const title = $('track-title').value.trim();
     const date = $('release-date').value;
@@ -261,8 +266,13 @@
 
   const monthInput = $('report-month'); monthInput.value = state.pendingFinish?.month || monthNow();
   monthInput.addEventListener('change', loadReport);
-  function readValues() { return { igViews: val('ig-views'), igFollowers: val('ig-followers'), ttViews: val('tt-views'), ttFollowers: val('tt-followers'), yandexPlays: val('yandex-plays'), yandexListeners: val('yandex-listeners'), vkPlays: val('vk-plays'), vkListeners: val('vk-listeners'), spotifyPlays: val('spotify-plays'), spotifyListeners: val('spotify-listeners'), applePlays: val('apple-plays'), appleListeners: val('apple-listeners') }; }
-  function val(id) { return Math.max(0, Number($(id).value) || 0); }
+  function readValues() {
+    const fields = { igViews: 'ig-views', igFollowers: 'ig-followers', ttViews: 'tt-views', ttFollowers: 'tt-followers', yandexPlays: 'yandex-plays', yandexListeners: 'yandex-listeners', vkPlays: 'vk-plays', vkListeners: 'vk-listeners', spotifyPlays: 'spotify-plays', spotifyListeners: 'spotify-listeners', applePlays: 'apple-plays', appleListeners: 'apple-listeners' };
+    return Object.fromEntries(Object.entries(fields).flatMap(([key, id]) => {
+      const raw = $(id).value.trim();
+      return raw === '' ? [] : [[key, Math.max(0, Number(raw) || 0)]];
+    }));
+  }
   function loadReport() { const report = state.reports.find(r => r.month === monthInput.value); const values = report?.values || {}; for (const [key, id] of Object.entries({'igViews':'ig-views','igFollowers':'ig-followers','ttViews':'tt-views','ttFollowers':'tt-followers','yandexPlays':'yandex-plays','yandexListeners':'yandex-listeners','vkPlays':'vk-plays','vkListeners':'vk-listeners','spotifyPlays':'spotify-plays','spotifyListeners':'spotify-listeners','applePlays':'apple-plays','appleListeners':'apple-listeners'})) $(id).value = values[key] ?? ''; const isLegacy = report && values.musicPlays !== undefined && !['yandexPlays','vkPlays','spotifyPlays','applePlays'].some(key => values[key] !== undefined); $('legacy-report-note').hidden = !isLegacy; $('report-month-title').textContent = formatMonth(monthInput.value); }
   function finishPlan() {
     const month = state.current.date?.slice(0, 7) || monthNow();
@@ -272,19 +282,30 @@
     save(); monthInput.value = month; loadReport(); refreshPendingUI(); showView('analytics');
     toast('Сначала заполни аналитику за месяц');
   }
-  function refreshPendingUI() { const pending = state.pendingFinish; $('analytics-pending').hidden = !pending; monthInput.disabled = !!pending; $('save-report').textContent = pending ? 'Сохранить отчёт и показать итоги' : 'Сохранить отчёт'; if (pending) $('analytics-pending-copy').textContent = `Заполни все показатели за ${formatMonth(pending.month)}, затем откроются итоги месяца.`; }
+  function refreshPendingUI() { const pending = state.pendingFinish; $('analytics-pending').hidden = !pending; monthInput.disabled = !!pending; $('save-report').textContent = pending ? 'Сохранить заполненное и показать итоги' : 'Сохранить отчёт'; $('skip-report').hidden = !pending; if (pending) $('analytics-pending-copy').textContent = `Заполни доступные показатели за ${formatMonth(pending.month)}. Неизвестные оставь пустыми — они не попадут в отчёт.`; }
   $('save-report').addEventListener('click', () => {
     if (!monthInput.value) { toast('Выбери месяц отчёта'); return; }
-    const fieldIds = ['ig-views', 'ig-followers', 'tt-views', 'tt-followers', 'yandex-plays', 'yandex-listeners', 'vk-plays', 'vk-listeners', 'spotify-plays', 'spotify-listeners', 'apple-plays', 'apple-listeners'];
-    if (fieldIds.some(id => $(id).value.trim() === '')) { toast('Заполни все показатели; если данных нет, укажи 0'); return; }
+    const values = readValues();
+    if (!Object.keys(values).length) { toast('Нет заполненных показателей. Можно пропустить аналитику.'); return; }
     const idx = state.reports.findIndex(r => r.month === monthInput.value);
-    const existingValues = idx >= 0 ? state.reports[idx].values : {};
-    const report = { month: monthInput.value, values: { ...existingValues, ...readValues() }, updatedAt: new Date().toISOString() };
+    const previousValues = idx >= 0 ? state.reports[idx].values : {};
+    if (previousValues.musicPlays !== undefined && !['yandexPlays', 'vkPlays', 'spotifyPlays', 'applePlays'].some(key => previousValues[key] !== undefined)) {
+      values.musicPlays = previousValues.musicPlays;
+      if (previousValues.musicListeners !== undefined) values.musicListeners = previousValues.musicListeners;
+    }
+    const report = { month: monthInput.value, values, updatedAt: new Date().toISOString() };
     if (idx >= 0) state.reports[idx] = report; else state.reports.push(report);
     save(); $('legacy-report-note').hidden = true; renderReports();
     if (state.pendingFinish) { const cycle = state.current; state.pendingFinish = null; save(); refreshPendingUI(); showView('home', () => showCycleReview(cycle, report)); return; }
     if (showQuarterReview()) return;
     toast('Месячный отчёт сохранён');
+  });
+  $('skip-report').addEventListener('click', () => {
+    if (!state.pendingFinish) return;
+    const cycle = state.current;
+    state.pendingFinish = null; save(); refreshPendingUI();
+    showView('home', () => showCycleReview(cycle, null));
+    toast('Аналитика пропущена');
   });
   let viewTransitionTimer;
   function showView(name, afterTransition) {
