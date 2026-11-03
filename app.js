@@ -72,10 +72,22 @@
   function renderProfile() {
     $('profile-alias').value = state.profile.alias || '';
     $('profile-name-preview').textContent = state.profile.alias || 'Новый артист';
+    renderBrandName(state.profile.alias);
     document.body.dataset.theme = state.theme;
     document.querySelectorAll('[data-theme-choice]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.themeChoice === state.theme)));
   }
-  $('profile-alias').addEventListener('input', () => { $('profile-name-preview').textContent = $('profile-alias').value.trim() || 'Новый артист'; });
+  function renderBrandName(alias) {
+    const name = String(alias || '').trim();
+    $('brand-default').hidden = Boolean(name);
+    $('brand-alias').hidden = !name;
+    $('brand-alias').textContent = name;
+    $('brand').setAttribute('aria-label', name ? `Трекер артиста · ${name}` : 'Трекер артиста');
+  }
+  $('profile-alias').addEventListener('input', () => {
+    const alias = $('profile-alias').value.trim();
+    $('profile-name-preview').textContent = alias || 'Новый артист';
+    renderBrandName(alias);
+  });
   $('save-profile').addEventListener('click', () => {
     state.profile = { ...state.profile, alias: $('profile-alias').value.trim() }; save(); renderProfile(); toast('Профиль сохранён');
   });
