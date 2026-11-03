@@ -63,3 +63,12 @@ body[data-theme="sky"]{--lemon:#0295C8;--silver:#F7FEFE;--bg:#061015;--panel:rgb
 @media(max-width:650px){.profile-panel{padding:19px 15px}.theme-choices{grid-template-columns:1fr}.theme-choice{padding:10px 12px}.theme-choice small{font-size:8px}}
 body[data-theme="electric"] .activity-chip,body[data-theme="electric"] .tip-line span{color:#FC734D;border-color:#FC734D45;background-color:#FC734D10}body[data-theme="electric"] .dialog-mark{color:#0297DE;background:#0297de1a}body[data-theme="electric"] .review-slogan{color:#0297DE!important}body[data-theme="electric"] .app-guide:after{background:#0297de18}
 body[data-theme="sky"] .activity-chip,body[data-theme="sky"] .tip-line span{color:#D8278B;border-color:#D8278B45;background-color:#D8278B10}body[data-theme="sky"] .dialog-mark{color:#0295C8;background:#0295c81a}body[data-theme="sky"] .review-slogan{color:#0295C8!important}body[data-theme="sky"] .app-guide:after{background:#0295c81a}
+/* Keep the release date and notes fields inside their grid tracks on narrow Telegram screens. */
+.fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fields>.field{min-width:0}
+.fields>.field input,.fields>.field textarea{min-width:0;max-width:100%}
+/* Give repeated quest completions a consistent, evenly spaced layout. */
+.activity-list{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin-top:10px}
+.activity-chip{display:inline-flex;align-items:center;min-height:29px;line-height:1.35}
+.quest-add-button{display:inline-flex;align-items:center;gap:8px}
+.quest-add-icon{display:inline-block;font-size:15px;line-height:1}
